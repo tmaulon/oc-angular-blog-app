@@ -40,11 +40,9 @@ export class PostListItemComponent implements OnInit {
 
   onLike(): void {
     this.postLoveIts = this.postLoveIts + 1;
-    console.log('like', this.postLoveIts);
   }
 
   onDislike(): void {
     this.postLoveIts = this.postLoveIts - 1;
-    console.log('dislike', this.postLoveIts);
   }
 }
