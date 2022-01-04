@@ -1,10 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-export interface Post {
-  title: string;
-  content: string;
-  loveIts: number;
-  created_at: Date;
-}
 
 @Component({
   selector: 'app-post-list-item',
