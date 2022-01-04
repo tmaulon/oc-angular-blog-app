@@ -8,35 +8,37 @@ import { Post } from '../model/post';
 })
 export class PostService {
   postsSubject = new Subject<Post[]>();
-  // private posts: Post[] = [];
-  private posts: Post[] = [
-    {
-      id: 1,
-      title: 'Mon premier post',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam elit lacus, dignissim eu nulla vitae, sagittis hendrerit magna. Nam interdum leo maximus felis auctor, sit amet feugiat lorem sagittis. Duis eleifend metus id ex convallis rhoncus. Curabitur pulvinar rutrum velit id feugiat. ',
-      loveIts: 0,
-      created_at: new Date(),
-    },
-    {
-      id: 2,
-      title: 'Mon deuxième post',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam elit lacus, dignissim eu nulla vitae, sagittis hendrerit magna. Nam interdum leo maximus felis auctor, sit amet feugiat lorem sagittis. Duis eleifend metus id ex convallis rhoncus. Curabitur pulvinar rutrum velit id feugiat. ',
-      loveIts: 0,
-      created_at: new Date(),
-    },
-    {
-      id: 3,
-      title: 'Encore un post',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam elit lacus, dignissim eu nulla vitae, sagittis hendrerit magna. Nam interdum leo maximus felis auctor, sit amet feugiat lorem sagittis. Duis eleifend metus id ex convallis rhoncus. Curabitur pulvinar rutrum velit id feugiat. ',
-      loveIts: 0,
-      created_at: new Date(),
-    },
-  ];
+  private posts: Post[] = [];
+  // private posts: Post[] = [
+  //   {
+  //     id: 1,
+  //     title: 'Mon premier post',
+  //     content:
+  //       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam elit lacus, dignissim eu nulla vitae, sagittis hendrerit magna. Nam interdum leo maximus felis auctor, sit amet feugiat lorem sagittis. Duis eleifend metus id ex convallis rhoncus. Curabitur pulvinar rutrum velit id feugiat. ',
+  //     loveIts: 0,
+  //     created_at: new Date(),
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Mon deuxième post',
+  //     content:
+  //       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam elit lacus, dignissim eu nulla vitae, sagittis hendrerit magna. Nam interdum leo maximus felis auctor, sit amet feugiat lorem sagittis. Duis eleifend metus id ex convallis rhoncus. Curabitur pulvinar rutrum velit id feugiat. ',
+  //     loveIts: 0,
+  //     created_at: new Date(),
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Encore un post',
+  //     content:
+  //       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam elit lacus, dignissim eu nulla vitae, sagittis hendrerit magna. Nam interdum leo maximus felis auctor, sit amet feugiat lorem sagittis. Duis eleifend metus id ex convallis rhoncus. Curabitur pulvinar rutrum velit id feugiat. ',
+  //     loveIts: 0,
+  //     created_at: new Date(),
+  //   },
+  // ];
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) {
+    this.getAllPosts();
+  }
 
   emitPostSubject() {
     this.postsSubject.next([...this.posts]);
@@ -87,10 +89,35 @@ export class PostService {
       next: (postsResponse) => {
         console.log('Demande des posts en cours...', postsResponse);
         this.posts = postsResponse;
+        this.emitPostSubject();
       },
       error: (error) =>
         console.log('Erreur lors de la demande des posts : ', error),
       complete: () => console.log('Demande des posts terminée!'),
     });
+  }
+
+  getPostById(postId: number): Post {
+    const post = this.posts.find((post) => post.id === postId);
+    if (!post) {
+      throw new Error('Post non trouvé');
+    }
+    return post;
+  }
+
+  getPost(id: number): Post {
+    return this.getPostById(id);
+  }
+
+  removePost(postToRemove: Post) {
+    const postIndexToRemove = this.posts.findIndex(
+      (post) => post === postToRemove
+    );
+    if (postIndexToRemove < 0) {
+      throw new Error('Index du post non trouvé!');
+    }
+    this.posts.splice(postIndexToRemove, 1);
+    this.saveAllPosts();
+    this.emitPostSubject();
   }
 }

@@ -20,15 +20,20 @@ export class PostListComponent implements OnInit, OnDestroy {
         console.log('Demande initiale des posts en cours...', posts);
         this.posts = posts;
       },
-      error: (error) =>
-        console.log('Erreur lors de la demande initiale des posts : ', error),
-      complete: () => console.log('Demande initiale des posts terminée!'),
     });
     this.postService.emitPostSubject();
   }
 
   onSaveAll() {
     this.postService.saveAllPosts();
+  }
+
+  onGetAll() {
+    this.postService.getAllPosts();
+  }
+
+  onRemovePost(post: Post) {
+    this.postService.removePost(post);
   }
 
   ngOnDestroy(): void {

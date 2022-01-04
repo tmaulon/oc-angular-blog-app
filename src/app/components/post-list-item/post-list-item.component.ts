@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { PostService } from './../../services/post.service';
 
 @Component({
   selector: 'app-post-list-item',
@@ -6,12 +7,13 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./post-list-item.component.scss'],
 })
 export class PostListItemComponent implements OnInit {
-  @Input() postTitle: string = '';
-  @Input() postContent: string = '';
-  @Input() postLoveIts: number = 0;
+  @Input() postId!: number;
+  @Input() postTitle!: string;
+  @Input() postContent!: string;
+  @Input() postLoveIts!: number;
   postCreationDate?: Promise<Date>;
 
-  constructor() {
+  constructor(private postService: PostService) {
     this.postCreationDate = new Promise((resolve, reject) => {
       const date = new Date();
       setTimeout(() => {
@@ -38,5 +40,10 @@ export class PostListItemComponent implements OnInit {
 
   onDislike(): void {
     this.postLoveIts = this.postLoveIts - 1;
+  }
+
+  onRemovePostItem() {
+    const postToRemove = this.postService.getPostById(this.postId);
+    this.postService.removePost(postToRemove);
   }
 }

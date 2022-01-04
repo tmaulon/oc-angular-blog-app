@@ -2,13 +2,19 @@
   <ul class="list-group">
     <app-post-list-item
       *ngFor="let post of posts"
+      [postId]="post.id"
       [postTitle]="post.title"
       [postContent]="post.content"
       [postLoveIts]="post.loveIts"
       postCreationDate="post.created_at"
     ></app-post-list-item>
   </ul>
-  <button class="btn btn-primary" (click)="onSaveAll()">
-    Enregistrer les appareils
-  </button>
+  <div>
+    <button class="btn btn-primary" (click)="onSaveAll()">
+      Enregistrer les posts
+    </button>
+    <button class="btn btn-primary" (click)="onGetAll()">
+      Récupérer les posts
+    </button>
+  </div>
 </section>

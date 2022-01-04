@@ -16,8 +16,15 @@
   <p [ngStyle]="{ color: getTextColor() }">
     {{ postContent }}
   </p>
-  <div>
-    <button class="btn btn-success" (click)="onLike()">Love it</button>
-    <button class="btn btn-danger" (click)="onDislike()">Don't love it</button>
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <button class="btn btn-success" (click)="onLike()">Love it</button>
+      <button class="btn btn-danger" (click)="onDislike()">
+        Don't love it
+      </button>
+    </div>
+    <button class="btn btn-danger" (click)="onRemovePostItem()">
+      Suprrimer ce posts
+    </button>
   </div>
 </li>
