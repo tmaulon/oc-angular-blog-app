@@ -1,0 +1,25 @@
+<header class="app-header">
+  <h1 class="app-title">
+    {{ title }}
+  </h1>
+  <nav>
+    <a
+      routerLink=""
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Home</a
+    >
+    <a
+      routerLink="posts"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Blog</a
+    >
+    <a
+      routerLink="new-post"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Nouvel article</a
+    >
+  </nav>
+</header>
