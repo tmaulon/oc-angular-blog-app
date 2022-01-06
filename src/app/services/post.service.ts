@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Post } from '../model/post';
+import { DraftPost } from './../model/post';
 
 @Injectable({
   providedIn: 'root',
@@ -62,15 +63,35 @@ export class PostService {
       complete: () => console.log('Enregistrement de tout les posts terminé!'),
     });
   }
-  savePost(post: Post) {
+
+  getLastPostId() {
+    return this.posts[this.posts.length - 1].id;
+  }
+
+  incrementLastPostId() {
+    return this.getLastPostId() + 1;
+  }
+
+  savePost(post: DraftPost) {
+    const newPost: Post = {
+      id: 0,
+      title: '',
+      content: '',
+      created_at: new Date(),
+      loveIts: 0,
+    };
+    newPost.title = post.title;
+    newPost.content = post.content;
+    newPost.id = this.incrementLastPostId();
     const savedPost: Observable<Post> = this.httpClient.put<Post>(
       'https://oc-angular-blog-app-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
-      post
+      newPost
     );
     savedPost.subscribe({
       next: (post) => {
         console.log("Enregistrement d'un nouveau post...", post);
-        this.posts.push(post);
+        this.posts.push(newPost);
+        this.emitPostSubject();
       },
       error: (error) =>
         console.log(

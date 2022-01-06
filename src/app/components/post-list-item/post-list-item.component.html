@@ -10,7 +10,7 @@
       {{ postTitle }}
     </h2>
     <p>
-      {{ postCreationDate | async | date: "short" }}
+      {{ postCreationDate | date: "short" }}
     </p>
   </div>
   <p [ngStyle]="{ color: getTextColor() }">

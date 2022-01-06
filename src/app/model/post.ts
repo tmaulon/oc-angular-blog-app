@@ -5,3 +5,8 @@ export interface Post {
   loveIts: number;
   created_at: Date;
 }
+
+export interface DraftPost {
+  title: string;
+  content: string;
+}

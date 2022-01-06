@@ -11,16 +11,9 @@ export class PostListItemComponent implements OnInit {
   @Input() postTitle!: string;
   @Input() postContent!: string;
   @Input() postLoveIts!: number;
-  postCreationDate?: Promise<Date>;
+  @Input() postCreationDate!: Date;
 
-  constructor(private postService: PostService) {
-    this.postCreationDate = new Promise((resolve, reject) => {
-      const date = new Date();
-      setTimeout(() => {
-        resolve(date);
-      }, 2000);
-    });
-  }
+  constructor(private postService: PostService) {}
 
   ngOnInit(): void {}
 
