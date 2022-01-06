@@ -4,12 +4,16 @@ import { Observable, Subject } from 'rxjs';
 import { Post } from '../model/post';
 import { DraftPost } from './../model/post';
 
+interface FirebasePost {
+  [key: string]: Post;
+}
 @Injectable({
   providedIn: 'root',
 })
 export class PostService {
-  postsSubject = new Subject<Post[]>();
   private posts: Post[] = [];
+  postsSubject = new Subject<Post[]>();
+
   // private posts: Post[] = [
   //   {
   //     id: 1,
@@ -42,6 +46,8 @@ export class PostService {
   }
 
   emitPostSubject() {
+    console.log('in emit post subject... this.posts : ', this.posts);
+
     this.postsSubject.next([...this.posts]);
   }
 
@@ -65,7 +71,9 @@ export class PostService {
   }
 
   getLastPostId() {
-    return this.posts[this.posts.length - 1].id;
+    return this.posts !== null && this.posts && this.posts.length > 0
+      ? this.posts[this.posts.length - 1].id
+      : 0;
   }
 
   incrementLastPostId() {
@@ -83,7 +91,7 @@ export class PostService {
     newPost.title = post.title;
     newPost.content = post.content;
     newPost.id = this.incrementLastPostId();
-    const savedPost: Observable<Post> = this.httpClient.put<Post>(
+    const savedPost: Observable<Post> = this.httpClient.post<Post>(
       'https://oc-angular-blog-app-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
       newPost
     );
@@ -102,19 +110,35 @@ export class PostService {
     });
   }
 
+  updatePost(postToUpdate: Post) {
+    const postIndexToUpdate = this.posts.findIndex(
+      (post) => post.id === postToUpdate.id
+    );
+    if (postIndexToUpdate < 0) {
+      throw new Error('Index du post non trouvé!');
+    }
+    this.posts[postIndexToUpdate] = postToUpdate;
+    this.saveAllPosts();
+    this.emitPostSubject();
+  }
+
   getAllPosts() {
-    const posts: Observable<Post[]> = this.httpClient.get<Post[]>(
+    const posts: Observable<FirebasePost> = this.httpClient.get<FirebasePost>(
       'https://oc-angular-blog-app-default-rtdb.europe-west1.firebasedatabase.app/posts.json'
     );
     posts.subscribe({
       next: (postsResponse) => {
-        console.log('Demande des posts en cours...', postsResponse);
-        this.posts = postsResponse;
+        console.log(
+          'Demande des posts en cours...',
+          postsResponse,
+          typeof postsResponse
+        );
+        this.posts = Object.values(postsResponse).map((value) => value);
         this.emitPostSubject();
       },
       error: (error) =>
         console.log('Erreur lors de la demande des posts : ', error),
-      complete: () => console.log('Demande des posts terminée!'),
+      complete: () => console.log('Demande des posts terminée!', this.posts),
     });
   }
 
@@ -140,5 +164,24 @@ export class PostService {
     this.posts.splice(postIndexToRemove, 1);
     this.saveAllPosts();
     this.emitPostSubject();
+  }
+
+  incrementLoveIts(postId: number) {
+    const postToUpdate = this.getPostById(postId);
+    const updatedPost: Post = {
+      ...postToUpdate,
+      loveIts: postToUpdate.loveIts + 1,
+    };
+    this.updatePost(updatedPost);
+  }
+
+  decrementLoveIts(postId: number) {
+    const postToUpdate = this.getPostById(postId);
+
+    const updatedPost: Post = {
+      ...postToUpdate,
+      loveIts: postToUpdate.loveIts - 1,
+    };
+    this.updatePost(updatedPost);
   }
 }

@@ -16,8 +16,9 @@
   <p [ngStyle]="{ color: getTextColor() }">
     {{ postContent }}
   </p>
-  <div class="d-flex justify-content-between align-items-center">
+  <div class="d-flex justify-content-between align-items-end">
     <div>
+      <p>{{ postLoveIts }} {{ postLoveIts >= 0 ? "❤️" : "💔" }}</p>
       <button class="btn btn-success" (click)="onLike()">Love it</button>
       <button class="btn btn-danger" (click)="onDislike()">
         Don't love it
